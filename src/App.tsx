@@ -473,6 +473,7 @@ const blankManualDraft: ManualProductDraft = {
 const heroBackgroundImage =
   'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=80'
 const loadoutTitle = 'PENTLANDS WET DAY HIKE'
+const configuredAuthRedirectUrl = import.meta.env.VITE_AUTH_REDIRECT_URL?.trim()
 const loadoutConditionsLabel = '8\u00B0C · Light rain · Windy'
 
 const libraryFilterOptions: Array<{ value: LibraryFilter; label: string }> = [
@@ -844,6 +845,10 @@ function sameLocation(location: Location, target: DropTarget) {
   return location.slotId === target.slotId
 }
 
+function getAuthRedirectUrl() {
+  return configuredAuthRedirectUrl || window.location.origin
+}
+
 function SetupPanel() {
   return (
     <main className="auth-shell">
@@ -858,7 +863,7 @@ function SetupPanel() {
           <code>VITE_SUPABASE_PUBLISHABLE_KEY={supabaseConfig.keyPlaceholder}</code>
         </div>
         <p className="auth-hint">
-          Also make sure your Supabase Auth URL configuration includes <strong>{window.location.origin}</strong> as an
+          Also make sure your Supabase Auth URL configuration includes <strong>{getAuthRedirectUrl()}</strong> as an
           allowed redirect URL for magic links.
         </p>
       </section>
@@ -885,7 +890,7 @@ function AuthScreen() {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: getAuthRedirectUrl(),
         shouldCreateUser: true,
       },
     })
